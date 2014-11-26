@@ -48,9 +48,9 @@ func New() *K {
 	return k
 }
 
-/* Signal safely closes the channel returned by Chan.  It is not an error for
-multiple goroutines to call Signal.  It returns true if it actually closed the
-channel (as opposed to it already being closed). */
+//Signal safely closes the channel returned by Chan.  It is not an error for
+//multiple goroutines to call Signal.  It returns true if it actually closed the
+//channel (as opposed to it already being closed).
 func (k *K) Signal() {
 	/* Get a lock */
 	k.m.Lock()
@@ -67,8 +67,8 @@ func (k *K) Chan() <-chan int {
 	return k.c
 }
 
-/* Closed returns true if the channel returned by Chan has been closed by a
- * call to Signal */
+//Closed returns true if the channel returned by Chan has been closed by a
+//call to Signal.
 func (k *K) Closed() bool {
 	/* Get a lock */
 	k.m.RLock()
