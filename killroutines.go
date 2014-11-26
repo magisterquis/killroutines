@@ -68,7 +68,7 @@ func (k *K) Chan() <-chan int {
 }
 
 /* Closed returns true if the channel returned by Chan has been closed by a
-call to Signal */
+ * call to Signal */
 func (k *K) Closed() bool {
 	/* Get a lock */
 	k.m.RLock()
