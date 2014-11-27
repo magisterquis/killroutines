@@ -26,6 +26,29 @@
  * SOFTWARE.
  */
 
+// Package killroutines provides a one-time signal to signal multiple
+// goroutines at once, by waiting for a channel close.  The benefit of using
+// killroutines over a channel is killroutines provides built-in protection
+// against closing a channel twice and the ability to test if the channel is
+// already closed.
+//
+// The general pattern of usage is as follows.  A pointer is made that points
+// to a struct of type K, which is passed to each goroutine to be signaled.
+//     done := killroutines.New()
+//     go worker(in chan int, out chan int, done *killroutines.K)
+// Each goroutine waits on the channel returned by the Done() to close
+//     select {
+//     case i := <-in:
+//             /* Do some work */
+//
+//             if allShouldExit() {
+//                     done.Signal()
+//             }
+//
+//     case <-done:
+//             /* Cleanup */
+//             return
+//     }
 package killroutines
 
 import (
@@ -34,14 +57,14 @@ import (
 
 /* TODO: Examples */
 
-/* Synchronization struct */
+/* K is an opaque struct passed to goroutines to allow for a one-time signal */
 type K struct {
 	c      chan int     /* Closed when all are to die */
 	m      sync.RWMutex /* Held before changing c */
 	closed bool         /* Whether C is closed or not */
 }
 
-/* New returns a pointer to a new K */
+/* New allocates and returns a pointer to a new K, which is is a ready-to-use state */
 func New() *K {
 	k := &K{}
 	k.c = make(chan int)
@@ -50,7 +73,8 @@ func New() *K {
 
 //Signal safely closes the channel returned by Chan.  It is not an error for
 //multiple goroutines to call Signal.  It returns true if it actually closed the
-//channel (as opposed to it already being closed).
+//channel (as opposed to it already being closed).  This is the means by which
+//goroutines are signaled.
 func (k *K) Signal() {
 	/* Get a lock */
 	k.m.Lock()
