@@ -6,6 +6,7 @@ them to terminate).
 
 Not tested in production code (yet).
 Written for [ircstatus](https://github.com/kd5pbo/ircstatus "ircstatus repo").
+Not actually used.  Feel free to try it and report any bugs.
 
 Contrived Example
 -----------------
